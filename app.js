@@ -3,8 +3,8 @@ const app = express();
 const bodyparser = require('body-parser');
 const exhbs = require('express-handlebars');
 const dbo = require('./db');
-const ObjectID = dbo.ObjectID;
-const { ObjectId } = require('mongodb');
+const ObjectID = dbo.ObjectId;
+const { ObjectId} =('mongodb');
 app.engine('hbs',exhbs.engine({layoutsDir:'views/',defaultLayout:'main',extname:"hbs"}))
 app.set('view engine','hbs');
 app.set('views','views');
@@ -18,12 +18,17 @@ app.get('/',async (req,res) =>{
 
     let message = '';
     let edit_id,edit_book;
-    console.log(req.query);
+    //console.log(req.query);
 
     if(req.query.edit_id){
         edit_id = req.query.edit_id;
-        console.log(edit_id);
+        //console.log(edit_id);
         edit_book = await collection.findOne({_id:new ObjectId(edit_id)})
+    }
+    if(req.query.delete_id){
+        //console.log(req.query.delete_id);
+        await collection.deleteOne({_id:new ObjectID(req.query.delete_id)})
+        return res.redirect('/?status=3');
     }
     switch(req.query.status){
         case '1':
@@ -31,6 +36,9 @@ app.get('/',async (req,res) =>{
             break;
         case '2':
             message = "Book updated successfully";
+            break;
+        case '3':
+            message = "Book deleted successfully";
             break;
         default:
             break;
